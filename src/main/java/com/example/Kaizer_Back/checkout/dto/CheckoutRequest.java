@@ -1,5 +1,6 @@
 package com.example.Kaizer_Back.checkout.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -9,15 +10,19 @@ import jakarta.validation.constraints.Positive;
 public class CheckoutRequest {
 
 	@NotEmpty
-	private List<Item> items;
+    private List<Item> items;
 
-	public List<Item> getItems() {
-		return items;
-	}
+    private BigDecimal envio;
+    private String district;
 
-	public void setItems(List<Item> items) {
-		this.items = items;
-	}
+    public BigDecimal getEnvio() { return envio; }
+    public void setEnvio(BigDecimal envio) { this.envio = envio; }
+
+    public String getDistrict() { return district; }
+    public void setDistrict(String district) { this.district = district; }
+
+    public List<Item> getItems() { return items; }
+    public void setItems(List<Item> items) { this.items = items; }
 
 	public static class Item {
 		@NotNull

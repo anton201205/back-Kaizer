@@ -27,45 +27,43 @@ public class CheckoutService {
 	}
 
 	@Transactional
-	public CheckoutResponse checkout(CheckoutRequest request) {
-		// Crea pedido (orden) y aplica descuento de stock con bloqueo pesimista.
-		// Esto mitiga race conditions cuando múltiples compras intentan tomar el mismo stock.
-		Pedido pedido = Pedido.builder().estado("CREADO").build();
+public CheckoutResponse checkout(CheckoutRequest request) {
+    Pedido pedido = Pedido.builder().estado("CREADO").build();
+    BigDecimal totalProductos = BigDecimal.ZERO;
 
-		BigDecimal total = BigDecimal.ZERO;
+    for (CheckoutRequest.Item item : request.getItems()) {
+        Producto producto = productoRepository.findByIdForUpdate(item.getProductId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no existe: " + item.getProductId()));
 
-		for (CheckoutRequest.Item item : request.getItems()) {
-			Long productId = item.getProductId();
-			int quantity = item.getQuantity();
+        int actual = producto.getStock() == null ? 0 : producto.getStock();
+        if (actual < item.getQuantity()) {
+            throw new StockInsuficienteException(item.getProductId(), actual, item.getQuantity());
+        }
 
-			Producto producto = productoRepository.findByIdForUpdate(productId)
-					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no existe: " + productId));
+        producto.setStock(actual - item.getQuantity());
 
-			int actual = producto.getStock() == null ? 0 : producto.getStock();
-			if (actual < quantity) {
-				throw new StockInsuficienteException(productId, actual, quantity);
-			}
+        PedidoItem pedidoItem = PedidoItem.builder()
+            .pedido(pedido)
+            .producto(producto)
+            .cantidad(item.getQuantity())
+            .precioUnitario(producto.getPrecio())
+            .build();
 
-			// Descontar stock
-			producto.setStock(actual - quantity);
+        pedido.getItems().add(pedidoItem);
+        totalProductos = totalProductos.add(producto.getPrecio().multiply(BigDecimal.valueOf(item.getQuantity())));
+    }
 
-			// Registrar item
-			PedidoItem pedidoItem = PedidoItem.builder()
-					.pedido(pedido)
-					.producto(producto)
-					.cantidad(quantity)
-					.precioUnitario(producto.getPrecio())
-					.build();
+    // Cálculos fiscales (IGV incluido en precio)
+    BigDecimal IGV_RATE = new BigDecimal("0.18");
+    BigDecimal baseImponible = totalProductos.divide(BigDecimal.ONE.add(IGV_RATE), 2, java.math.RoundingMode.HALF_UP);
+    BigDecimal igv = totalProductos.subtract(baseImponible);
+    BigDecimal envio = request.getEnvio() != null ? request.getEnvio() : BigDecimal.ZERO;
+    BigDecimal totalFinal = totalProductos.add(envio);
 
-			pedido.getItems().add(pedidoItem);
+    pedido.setTotal(totalFinal);
+    Pedido saved = pedidoRepository.save(pedido);
 
-			total = total.add(producto.getPrecio().multiply(BigDecimal.valueOf(quantity)));
-		}
-
-		pedido.setTotal(total);
-
-		Pedido saved = pedidoRepository.save(pedido);
-		return new CheckoutResponse(saved.getId(), saved.getTotal());
-	}
+    return new CheckoutResponse(saved.getId(), baseImponible, igv, envio, totalFinal);
+}
 }
 
