@@ -1,5 +1,6 @@
 package com.example.Kaizer_Back.auth;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
 	private final AuthenticationManager authenticationManager;
 	private final UsuarioService usuarioService;
 	private final UsuarioDetailsService usuarioDetailsService;
@@ -37,19 +40,25 @@ public class AuthController {
 		this.jwtService = jwtService;
 	}
 
-	@PostMapping("/register")
-	@ResponseStatus(HttpStatus.CREATED)
-	public AuthResponse register(@Valid @RequestBody AuthRequest request) {
-		usuarioService.registrar(request.email(), request.password());
-		UserDetails userDetails = usuarioDetailsService.loadUserByUsername(request.email());
-		return new AuthResponse(jwtService.generateToken(userDetails));
-	}
+	  @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthResponse register(@Valid @RequestBody AuthRequest request) {
+        log.info("[REGISTER] Intento de registro para: {}", request.email());
+        usuarioService.registrar(request.email(), request.password());
+        UserDetails userDetails = usuarioDetailsService.loadUserByUsername(request.email());
+        String token = jwtService.generateToken(userDetails);
+        log.info("[REGISTER] Usuario registrado exitosamente: {}", request.email());
+        return new AuthResponse(token);
+    }
 
-	@PostMapping("/login")
-	public AuthResponse login(@Valid @RequestBody AuthRequest request) {
-		var authToken = new UsernamePasswordAuthenticationToken(request.email(), request.password());
-		authenticationManager.authenticate(authToken);
-		UserDetails userDetails = usuarioDetailsService.loadUserByUsername(request.email());
-		return new AuthResponse(jwtService.generateToken(userDetails));
-	}
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody AuthRequest request) {
+        log.info("[LOGIN] Intento de login para: {}", request.email());
+        var authToken = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+        authenticationManager.authenticate(authToken);
+        UserDetails userDetails = usuarioDetailsService.loadUserByUsername(request.email());
+        String token = jwtService.generateToken(userDetails);
+        log.info("[LOGIN] Login exitoso para: {}", request.email());
+        return new AuthResponse(token);
+    }
 }
