@@ -1,3 +1,14 @@
+error id: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/auth/JwtService.java:java/lang/String#
+file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/auth/JwtService.java
+empty definition using pc, found symbol in pc: java/lang/String#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 633
+uri: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/auth/JwtService.java
+text:
+```scala
 package com.example.Kaizer_Back.auth;
 
 import java.nio.charset.StandardCharsets;
@@ -11,8 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.example.Kaizer_Back.usuario.Usuario;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -24,7 +33,7 @@ public class JwtService {
 	private final long expirationMinutes;
 
 	public JwtService(
-			@Value("${app.jwt.secret}") String secret,
+			@Value("${app.jwt.secret}") Str@@ing secret,
 			@Value("${app.jwt.expiration-minutes}") long expirationMinutes
 	) {
 		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
@@ -35,30 +44,16 @@ public class JwtService {
 		Instant now = Instant.now();
 		Instant exp = now.plus(expirationMinutes, ChronoUnit.MINUTES);
 
-		var builder = Jwts.builder()
+		return Jwts.builder()
 				.subject(userDetails.getUsername())
 				.issuedAt(Date.from(now))
-				.expiration(Date.from(exp));
-
-				
-		if (userDetails instanceof Usuario usuario) {
-			builder.claim("userId", usuario.getId());
-		}
-
-		return builder.signWith(key).compact();
+				.expiration(Date.from(exp))
+				.signWith(key)
+				.compact();
 	}
 
 	public String extractUsername(String token) {
 		return extractAllClaims(token).getSubject();
-	}
-
-	public Long extractUserId(String token) {
-		Claims claims = extractAllClaims(token);
-		Object userId = claims.get("userId");
-		if (userId == null) return null;
-		if (userId instanceof Long l) return l;
-		if (userId instanceof Integer i) return i.longValue();
-		return Long.valueOf(userId.toString());
 	}
 
 	public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -78,3 +73,10 @@ public class JwtService {
 				.getPayload();
 	}
 }
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: java/lang/String#

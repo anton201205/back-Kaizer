@@ -1,8 +1,13 @@
 package com.example.Kaizer_Back.checkout;
 
 public class StockInsuficienteException extends RuntimeException {
-	public StockInsuficienteException(Long productId, int stockActual, int solicitado) {
-		super("Stock insuficiente para producto " + productId + ". Disponible: " + stockActual + ", solicitado: " + solicitado);
-	}
-}
+    private final Long productoId;
 
+    public StockInsuficienteException(Long productoId, int actual, int solicitado) {
+        super(String.format("Stock insuficiente para producto %d: disponible=%d, solicitado=%d",
+                productoId, actual, solicitado));
+        this.productoId = productoId;
+    }
+
+    public Long getProductoId() { return productoId; }
+}

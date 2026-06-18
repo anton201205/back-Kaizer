@@ -1,7 +1,17 @@
+error id: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/usuario/UsuarioService.java:_empty_/PasswordEncoder#
+file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/usuario/UsuarioService.java
+empty definition using pc, found symbol in pc: _empty_/PasswordEncoder#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 545
+uri: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/usuario/UsuarioService.java
+text:
+```scala
 package com.example.Kaizer_Back.usuario;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,25 +19,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.Kaizer_Back.producto.PedidoRepository;
-import com.example.Kaizer_Back.producto.dto.PedidoResponse;
 import com.example.Kaizer_Back.usuario.dto.PerfilRequest;
 
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final PedidoRepository pedidoRepository;
+    private final Password@@Encoder passwordEncoder;
 
-    public UsuarioService(
-            UsuarioRepository usuarioRepository,
-            PasswordEncoder passwordEncoder,
-            PedidoRepository pedidoRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
-        this.pedidoRepository = pedidoRepository;
     }
+	
 
     public Usuario registrar(String email, String password) {
         if (usuarioRepository.existsByEmail(email)) {
@@ -62,13 +66,10 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
     }
-
-    public List<PedidoResponse> getOrdenesByEmail(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-        return pedidoRepository.findByUsuarioOrderByCreatedAtDesc(usuario)
-                .stream()
-                .map(PedidoResponse::from)
-                .toList();
-    }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/PasswordEncoder#

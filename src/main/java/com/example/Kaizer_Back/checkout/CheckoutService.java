@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.Kaizer_Back.auth.JwtService;
 import com.example.Kaizer_Back.checkout.dto.CheckoutRequest;
 import com.example.Kaizer_Back.checkout.dto.CheckoutResponse;
 import com.example.Kaizer_Back.producto.Pedido;
@@ -27,26 +28,26 @@ public class CheckoutService {
     private final ProductoRepository productoRepository;
     private final PedidoRepository pedidoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final JwtService jwtService;
 
     public CheckoutService(
             ProductoRepository productoRepository,
             PedidoRepository pedidoRepository,
-            UsuarioRepository usuarioRepository) {
+            UsuarioRepository usuarioRepository,
+            JwtService jwtService) {
         this.productoRepository = productoRepository;
         this.pedidoRepository = pedidoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.jwtService = jwtService;
     }
 
-    @Transactional
-    public CheckoutResponse checkout(CheckoutRequest request) {
-
-        // Obtener usuario autenticado si existe
+    @Transactional(rollbackFor = Exception.class)
+public CheckoutResponse checkout(CheckoutRequest request) {
         Usuario usuario = null;
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-            String email = auth.getName();
-            usuario = usuarioRepository.findByEmail(email).orElse(null);
-        }
+if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+    usuario = usuarioRepository.findByEmail(auth.getName()).orElse(null);
+}
 
         Pedido pedido = new Pedido();
         pedido.setEstado("CREADO");
@@ -80,7 +81,7 @@ public class CheckoutService {
                     producto.getPrecio().multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
-        // Cálculos fiscales
+        // Cálculos fiscales (IGV incluido en precio)
         BigDecimal baseImponible = totalProductos.divide(
                 BigDecimal.ONE.add(IGV_RATE), 2, RoundingMode.HALF_UP);
         BigDecimal igv = totalProductos.subtract(baseImponible).setScale(2, RoundingMode.HALF_UP);
@@ -92,6 +93,7 @@ public class CheckoutService {
         pedido.setEnvio(costoEnvio);
         pedido.setCostoEnvio(costoEnvio);
         pedido.setTotal(totalFinal);
+
         Pedido saved = pedidoRepository.save(pedido);
 
         return new CheckoutResponse(saved.getId(), baseImponible, igv, costoEnvio, totalFinal);

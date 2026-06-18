@@ -1,14 +1,19 @@
+error id: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/usuario/Usuario.java:Column#length#
+file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/usuario/Usuario.java
+empty definition using pc, found symbol in pc: 
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 966
+uri: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/usuario/Usuario.java
+text:
+```scala
 package com.example.Kaizer_Back.usuario;
 
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import jakarta.persistence.Column;
+import jakarta.persistence.Column; // Simplificamos los imports
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,7 +35,7 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "usuarios")
-public class Usuario implements UserDetails{
+public class Usuario {
 
 public Long getId() { return id; }
 
@@ -41,7 +46,7 @@ public Long getId() { return id; }
     @Column(nullable = false, unique = true, length = 190)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 100)
+    @Column(name = "password_hash", nullable = false, length@@ = 100)
     private String passwordHash;
 
     @Column(length = 100)
@@ -49,15 +54,6 @@ public Long getId() { return id; }
 
     @Column(length = 20)
     private String telefono;
-
-    @Column(length = 200)
-    private String direccion;
-
-    @Column(length = 100)
-    private String distrito;
-
-    @Column(length = 20)
-    private String dni;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
@@ -74,15 +70,10 @@ public Long getId() { return id; }
             this.role = Role.USER; // Valor por defecto si viene nulo
         }
     }
-    @Override public String getUsername() { return email; }
-    @Override public String getPassword() { return passwordHash; }
-    @Override public boolean isAccountNonExpired() { return true; }
-    @Override public boolean isAccountNonLocked() { return true; }
-    @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return true; }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-    }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: 

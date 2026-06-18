@@ -1,3 +1,14 @@
+error id: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/auth/JwtService.java:_empty_/`<any>`#issuedAt#expiration#claim#
+file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/auth/JwtService.java
+empty definition using pc, found symbol in pc: _empty_/`<any>`#issuedAt#expiration#claim#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 1246
+uri: file:///C:/Users/USER/Downloads/Kaizer-Back-main/Kaizer-Back-main/src/main/java/com/example/Kaizer_Back/auth/JwtService.java
+text:
+```scala
 package com.example.Kaizer_Back.auth;
 
 import java.nio.charset.StandardCharsets;
@@ -42,7 +53,7 @@ public class JwtService {
 
 				
 		if (userDetails instanceof Usuario usuario) {
-			builder.claim("userId", usuario.getId());
+			builder.claim@@("userId", usuario.getId());
 		}
 
 		return builder.signWith(key).compact();
@@ -78,3 +89,9 @@ public class JwtService {
 				.getPayload();
 	}
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/`<any>`#issuedAt#expiration#claim#
