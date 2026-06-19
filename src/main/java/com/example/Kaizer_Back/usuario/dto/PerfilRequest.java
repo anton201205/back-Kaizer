@@ -1,9 +1,14 @@
 package com.example.Kaizer_Back.usuario.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class PerfilRequest {
+
+    @Email
+    @Size(max = 190)
+    private String email;
 
     @Size(max = 100)
     private String nombre;
@@ -20,6 +25,8 @@ public class PerfilRequest {
     @Pattern(regexp = "^\\d{8}$", message = "DNI debe tener 8 dígitos")
     private String dni;
 
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getTelefono() { return telefono; }

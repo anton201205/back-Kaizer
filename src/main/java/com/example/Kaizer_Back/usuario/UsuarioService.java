@@ -53,6 +53,12 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            if (!request.getEmail().equalsIgnoreCase(email) && usuarioRepository.existsByEmail(request.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email ya registrado");
+            }
+            usuario.setEmail(request.getEmail());
+        }
         if (request.getNombre() != null) usuario.setNombre(request.getNombre());
         if (request.getTelefono() != null) usuario.setTelefono(request.getTelefono());
         if (request.getDireccion() != null) usuario.setDireccion(request.getDireccion());
@@ -67,6 +73,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
     }
 
+    @Transactional(readOnly = true)
     public List<PedidoResponse> getOrdenesByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));

@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.example.Kaizer_Back.auth.JwtService;
 import com.example.Kaizer_Back.checkout.CheckoutService;
@@ -52,11 +53,15 @@ class CheckoutServiceTest {
     @BeforeEach
     void setUpSecurityContext() {
         Authentication auth = mock(Authentication.class);
-        lenient().when(auth.isAuthenticated()).thenReturn(false);
-        lenient().when(auth.getPrincipal()).thenReturn("anonymousUser");
-        SecurityContext ctx = mock(SecurityContext.class);
-        lenient().when(ctx.getAuthentication()).thenReturn(auth);
+        lenient().when(auth.isAuthenticated()).thenReturn(true);
+        lenient().when(auth.getName()).thenReturn("user@example.com");
+        SecurityContext ctx = new SecurityContextImpl(auth);
         SecurityContextHolder.setContext(ctx);
+
+        com.example.Kaizer_Back.usuario.Usuario usuario = new com.example.Kaizer_Back.usuario.Usuario();
+        usuario.setEmail("user@example.com");
+        usuario.setDireccion("Av. Test 123");
+        lenient().when(usuarioRepository.findByEmail("user@example.com")).thenReturn(Optional.of(usuario));
     }
 
     private Producto productoConStock(Long id, int stock) {

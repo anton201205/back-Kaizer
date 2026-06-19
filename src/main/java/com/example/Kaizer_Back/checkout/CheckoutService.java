@@ -42,16 +42,26 @@ public class CheckoutService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-public CheckoutResponse checkout(CheckoutRequest request) {
+    public CheckoutResponse checkout(CheckoutRequest request) {
         Usuario usuario = null;
         var auth = SecurityContextHolder.getContext().getAuthentication();
-if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-    usuario = usuarioRepository.findByEmail(auth.getName()).orElse(null);
-}
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            usuario = usuarioRepository.findByEmail(auth.getName()).orElse(null);
+        }
+
+        if (usuario == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Debes iniciar sesión para completar el pedido");
+        }
+
+        if (usuario.getDireccion() == null || usuario.getDireccion().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Debes agregar una dirección de envío en tu perfil antes de continuar con la compra");
+        }
 
         Pedido pedido = new Pedido();
         pedido.setEstado("CREADO");
         pedido.setUsuario(usuario);
+        pedido.setDireccionEnvio(usuario.getDireccion());
         pedido.setDistrito(request.getDistrict());
         pedido.setMetodoPago(request.getMetodoPago());
 
