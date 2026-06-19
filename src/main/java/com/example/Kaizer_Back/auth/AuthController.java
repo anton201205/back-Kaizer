@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Kaizer_Back.auth.dto.AuthRequest;
 import com.example.Kaizer_Back.auth.dto.AuthResponse;
+import com.example.Kaizer_Back.auth.dto.RegisterRequest;
 import com.example.Kaizer_Back.usuario.UsuarioService;
 
 import jakarta.validation.Valid;
@@ -42,9 +43,16 @@ public class AuthController {
 
 	  @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthResponse register(@Valid @RequestBody AuthRequest request) {
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         log.info("[REGISTER] Intento de registro para: {}", request.email());
-        usuarioService.registrar(request.email(), request.password());
+        usuarioService.registrar(
+                request.email(),
+                request.password(),
+                request.nombre(),
+                request.telefono(),
+                request.distrito(),
+                request.dni()
+        );
         UserDetails userDetails = usuarioDetailsService.loadUserByUsername(request.email());
         String token = jwtService.generateToken(userDetails);
         log.info("[REGISTER] Usuario registrado exitosamente: {}", request.email());

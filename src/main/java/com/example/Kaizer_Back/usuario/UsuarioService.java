@@ -29,7 +29,7 @@ public class UsuarioService {
         this.pedidoRepository = pedidoRepository;
     }
 
-    public Usuario registrar(String email, String password) {
+    public Usuario registrar(String email, String password, String nombre, String telefono, String distrito, String dni) {
         if (usuarioRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email ya registrado");
         }
@@ -37,6 +37,10 @@ public class UsuarioService {
         Usuario usuario = Usuario.builder()
                 .email(email)
                 .passwordHash(passwordEncoder.encode(password))
+                .nombre(nombre)
+                .telefono(telefono)
+                .distrito(distrito)
+                .dni(dni)
                 .role(Role.USER)
                 .createdAt(OffsetDateTime.now())
                 .build();
