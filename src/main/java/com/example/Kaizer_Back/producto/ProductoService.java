@@ -25,6 +25,7 @@ public class ProductoService {
 				.precio(request.precio())
 				.imageUrl(request.imageUrl())
 				.stock(request.stock())
+				.categoria(request.categoria())
 				.build();
 
 		Producto saved = productoRepository.save(producto);
@@ -47,7 +48,8 @@ public class ProductoService {
 				producto.getDescripcion(),
 				producto.getPrecio(),
 				producto.getImageUrl(),
-				producto.getStock()
+				producto.getStock(),
+				producto.getCategoria()
 		);
 	}
 }

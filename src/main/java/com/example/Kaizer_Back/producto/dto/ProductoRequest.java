@@ -13,6 +13,7 @@ public record ProductoRequest(
 		@NotBlank String descripcion,
 		@NotNull @Positive BigDecimal precio,
 		@NotBlank @Size(max = 500) String imageUrl,
-		@NotNull @PositiveOrZero Integer stock
+		@NotNull @PositiveOrZero Integer stock,
+		@NotBlank String categoria
 ) {
 }
