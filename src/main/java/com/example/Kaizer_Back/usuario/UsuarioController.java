@@ -52,7 +52,7 @@ public class UsuarioController {
                 && !request.getEmail().equalsIgnoreCase(userDetails.getUsername())) {
             UserDetails newUserDetails = new User(
                     usuario.getEmail(),
-                    usuario.getPasswordHash(),
+                    userDetails.getPassword(),
                     List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRole().name()))
             );
             token = jwtService.generateToken(newUserDetails);

@@ -91,7 +91,7 @@ public class CheckoutService {
                     producto.getPrecio().multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
-        // Cálculos fiscales (IGV incluido en precio)
+
         BigDecimal baseImponible = totalProductos.divide(
                 BigDecimal.ONE.add(IGV_RATE), 2, RoundingMode.HALF_UP);
         BigDecimal igv = totalProductos.subtract(baseImponible).setScale(2, RoundingMode.HALF_UP);

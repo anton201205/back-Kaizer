@@ -66,12 +66,11 @@ public Long getId() { return id; }
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    // Esto asigna la fecha automáticamente antes de insertar en la DB
     @PrePersist
     protected void onCreate() {
         this.createdAt = OffsetDateTime.now();
         if (this.role == null) {
-            this.role = Role.USER; // Valor por defecto si viene nulo
+            this.role = Role.USER;
         }
     }
     @Override public String getUsername() { return email; }
